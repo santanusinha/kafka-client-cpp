@@ -48,7 +48,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libcommon_la_LIBADD =
-am_libcommon_la_OBJECTS = serializable.lo buffer.lo
+am_libcommon_la_OBJECTS = serializable.lo buffer.lo hostdetails.lo
 libcommon_la_OBJECTS = $(am_libcommon_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/./config/depcomp
@@ -210,14 +210,16 @@ top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = libcommon.la
 libcommon_la_SOURCES = \
 			serializable.cpp \
-			buffer.cpp
+			buffer.cpp \
+            hostdetails.cpp
 
 noinst_HEADERS = \
             buffer.h \
 			serializable.h
 
 include_HEADERS = \
-			error.h
+			error.h \
+            hostdetails.h
 
 all: all-am
 
@@ -272,6 +274,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostdetails.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/serializable.Plo@am__quote@
 
 .cpp.o:
