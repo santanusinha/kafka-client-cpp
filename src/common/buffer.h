@@ -5,76 +5,80 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "error.h"
 
 namespace Kafka {
 
-class Buffer {
+class Buffer: public boost::noncopyable, public boost::enable_shared_from_this<Buffer> {
     public:
-        Buffer();
+        typedef boost::shared_ptr<Buffer> Pointer;
+        typedef boost::shared_ptr<const Buffer> ConstPointer;
 
-        Buffer(void *data, size_t size);
+        static Pointer
+        create_for_write();
 
-        Buffer(const Buffer &rhs);
-
-        Buffer &
-        operator =(const Buffer &rhs);
+        static ConstPointer
+        create_for_read(const boost::asio::const_buffer &buffer);
 
         ~Buffer() throw();
 
         void
         reset() throw();
 
-        void
-        swap(Buffer &rhs) throw();
-
-        Buffer &
+        Pointer
         write(int64_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(uint64_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(int32_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(uint32_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(int16_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(uint16_t in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write(const std::string &in_value) throw(KafkaError);
 
-        Buffer &
+        Pointer
         write( const void *in_data, size_t in_data_size) throw(KafkaError);
 
-        Buffer &
+        Pointer
+        finalize_header();
+
+        boost::asio::const_buffer
         build() throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(int64_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(uint64_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(int32_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(uint32_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(int16_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(uint16_t &out_value) const throw(KafkaError);
 
-        const Buffer &
+        ConstPointer
         read(std::string &out_value) const throw(KafkaError);
 
         inline void *
@@ -84,6 +88,13 @@ class Buffer {
         size() const;
 
     private:
+        Buffer();
+
+        Buffer(const boost::asio::const_buffer &buffer);
+
+        void
+        swap(Buffer &rhs) throw();
+
         void
         write_16(void *mem) throw(KafkaError);
 
@@ -112,6 +123,9 @@ class Buffer {
         mutable size_t m_current_size;
         size_t m_actual_size;
 };
+
+typedef Buffer::Pointer BufferPtr;
+typedef Buffer::ConstPointer ConstBufferPtr;
 
 inline void *
 Buffer::data() const {

@@ -1,0 +1,5 @@
+#!/bin/csh -f
+setenv EDITOR vim
+set files = `find . \( -name '*.c' -o -name '*.cxx' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.hxx' -o -name '*.hpp' -o -name '*.ll' -o -name '*.yy' \) -print`
+ctags  $files
+cscope -c -C $files

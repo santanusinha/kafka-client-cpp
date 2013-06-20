@@ -1,0 +1,5 @@
+.deps
+cscope.out
+*.la
+*.o
+.*.sw*

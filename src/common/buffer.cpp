@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <byteswap.h>
+#include <boost/make_shared.hpp>
 
 #include "buffer.h"
 
@@ -19,57 +20,16 @@ static const size_t INITIAL_BUFFER_SIZE = 128;
 
 namespace Kafka {
 
-Buffer::Buffer()
-    :m_data(),
-    m_current_size(),
-    m_actual_size() {
+Buffer::Pointer
+Buffer::create_for_write() {
+    Pointer tmp( new Buffer() );
+    tmp->write(static_cast<int32_t>(0));
+    return tmp;
 }
 
-Buffer::Buffer(void *in_data, size_t in_data_size)
-    :m_data(),
-    m_current_size(),
-    m_actual_size() {
-	if( 0 == in_data_size ) {
-		return;
-	}
-	void *target = malloc(in_data_size);
-	if( 0 == target) {
-        throw KafkaError()
-                ;//<<CallsiteInfo(__FUNCTION__,std::string(__FILE__), __LINE__);
-	}
-	::memcpy(target, in_data, in_data_size);
-	m_data = target;
-	m_current_size = 0;
-	m_actual_size = in_data_size;
-}
-
-Buffer::Buffer(const Buffer &rhs)
-    :m_data(),
-    m_current_size(),
-    m_actual_size() {
-    //Exception safe
-    if( 0 == rhs.m_actual_size ) {
-        return;
-    }
-    Buffer tmp;
-    tmp.m_data = malloc(rhs.m_actual_size);
-    if( 0 == tmp.m_data ) {
-        throw KafkaError()
-                ;//<<CallsiteInfo(__FUNCTION__,std::string(__FILE__), __LINE__);
-    }
-	::memcpy(tmp.m_data, rhs.m_data, rhs.m_actual_size);
-    tmp.m_current_size = rhs.m_current_size;
-    tmp.m_actual_size = rhs.m_actual_size;
-    swap(tmp);
-}
-
-Buffer &
-Buffer::operator =(const Buffer &rhs) {
-    if( this != &rhs ) {
-        Buffer tmp(rhs);
-        swap(tmp);
-    }
-    return *this;
+Buffer::ConstPointer
+Buffer::create_for_read(const boost::asio::const_buffer &buffer) {
+    return ConstPointer( new Buffer(buffer) );
 }
 
 Buffer::~Buffer() throw() {
@@ -86,6 +46,139 @@ Buffer::reset() throw() {
     }
 }
 
+Buffer::Pointer
+Buffer::write(int64_t in_value) throw(KafkaError) {
+    write_64(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(uint64_t in_value) throw(KafkaError) {
+    write_64(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(int32_t in_value) throw(KafkaError) {
+    write_32(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(uint32_t in_value) throw(KafkaError) {
+    write_32(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(int16_t in_value) throw(KafkaError) {
+    write_16(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(uint16_t in_value) throw(KafkaError) {
+    write_16(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(const std::string &in_value) throw(KafkaError) {
+    int16_t size = in_value.size();
+    write(size);
+    return write(in_value.c_str(), in_value.size());
+}
+
+Buffer::Pointer
+Buffer::write( const void *in_data, size_t in_data_size) throw(KafkaError) {
+    void *mem = get(in_data_size);
+    memcpy(mem, in_data, in_data_size);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::finalize_header() {
+    *(reinterpret_cast<int32_t *>(m_data)) = m_current_size - sizeof(int32_t);
+    return shared_from_this();
+}
+
+boost::asio::const_buffer
+Buffer::build() throw(KafkaError) {
+    return boost::asio::buffer(m_data, m_current_size);
+}
+
+Buffer::ConstPointer
+Buffer::read(int64_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const int64_t *>(read_64());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(uint64_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const uint64_t *>(read_64());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(int32_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const int32_t *>(read_32());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(uint32_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const uint32_t *>(read_32());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(int16_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const int16_t *>(read_16());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(uint16_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const uint16_t *>(read_16());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(std::string &out_value) const throw(KafkaError) {
+    int16_t length;
+    read(length);
+    std::copy(reinterpret_cast<const char *>(m_data) + m_current_size,
+                reinterpret_cast<const char *>(m_data) + m_current_size + length,
+                std::back_inserter(out_value));
+    return shared_from_this();
+}
+
+Buffer::Buffer()
+    :m_data(),
+    m_current_size(),
+    m_actual_size() {
+}
+
+Buffer::Buffer(const boost::asio::const_buffer &buffer)
+    :m_data(),
+    m_current_size(),
+    m_actual_size() {
+    const void *in_data = boost::asio::buffer_cast<const void *>(buffer);
+    size_t in_data_size = boost::asio::buffer_size(buffer);
+	if( 0 == in_data_size ) {
+		return;
+	}
+	void *target = malloc(in_data_size);
+	if( 0 == target) {
+        throw KafkaError()
+                ;//<<CallsiteInfo(__FUNCTION__,std::string(__FILE__), __LINE__);
+	}
+	::memcpy(target, in_data, in_data_size);
+	m_data = target;
+	m_current_size = 0;
+	m_actual_size = in_data_size;
+}
+
 void
 Buffer::swap(Buffer &out_tmp) throw() {
     if(this != &out_tmp) {
@@ -93,111 +186,6 @@ Buffer::swap(Buffer &out_tmp) throw() {
         std::swap(m_current_size,out_tmp.m_current_size);
         std::swap(m_actual_size,out_tmp.m_actual_size);
     }
-}
-
-Buffer &
-Buffer::write(int64_t in_value) throw(KafkaError) {
-    write_64(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(uint64_t in_value) throw(KafkaError) {
-    write_64(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(int32_t in_value) throw(KafkaError) {
-    write_32(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(uint32_t in_value) throw(KafkaError) {
-    write_32(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(int16_t in_value) throw(KafkaError) {
-    write_16(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(uint16_t in_value) throw(KafkaError) {
-    write_16(&in_value);
-    return *this;
-}
-
-Buffer &
-Buffer::write(const std::string &in_value) throw(KafkaError) {
-    int16_t size = in_value.size();
-    write(size);
-    return write(in_value.c_str(), in_value.size());
-}
-
-Buffer &
-Buffer::write( const void *in_data, size_t in_data_size) throw(KafkaError) {
-    void *mem = get(in_data_size);
-    memcpy(mem, in_data, in_data_size);
-    return *this;
-}
-
-Buffer &
-Buffer::build() throw(KafkaError) {
-    if( 0 == m_data ) {
-        return *this;
-    }
-    *(reinterpret_cast<int32_t *>(m_data)) = m_current_size - sizeof(int32_t);
-    return *this;
-}
-
-const Buffer &
-Buffer::read(int64_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const int64_t *>(read_64());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(uint64_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const uint64_t *>(read_64());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(int32_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const int32_t *>(read_32());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(uint32_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const uint32_t *>(read_32());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(int16_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const int16_t *>(read_16());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(uint16_t &out_value) const throw(KafkaError) {
-    out_value = *reinterpret_cast<const uint16_t *>(read_16());
-    return *this;
-}
-
-const Buffer &
-Buffer::read(std::string &out_value) const throw(KafkaError) {
-    int16_t length;
-    read(length);
-    std::copy(reinterpret_cast<const char *>(m_data) + m_current_size,
-                reinterpret_cast<const char *>(m_data) + m_current_size + length,
-                std::back_inserter(out_value));
-    return *this; 
 }
 
 void
