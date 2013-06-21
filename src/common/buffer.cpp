@@ -11,6 +11,8 @@
 #include <boost/make_shared.hpp>
 
 #include "buffer.h"
+#include "serializable.h"
+#include "deserializable.h"
 
 namespace {
 
@@ -97,6 +99,13 @@ Buffer::write( const void *in_data, size_t in_data_size) throw(KafkaError) {
 }
 
 Buffer::Pointer
+Buffer::write( const Serializable &object ) {
+    Buffer::Pointer thisptr = shared_from_this();
+    object.save(thisptr);
+    return thisptr;
+}
+
+Buffer::Pointer
 Buffer::finalize_header() {
     *(reinterpret_cast<int32_t *>(m_data)) = m_current_size - sizeof(int32_t);
     return shared_from_this();
@@ -151,6 +160,13 @@ Buffer::read(std::string &out_value) const throw(KafkaError) {
                 reinterpret_cast<const char *>(m_data) + m_current_size + length,
                 std::back_inserter(out_value));
     return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(Deserializable &object) const throw(KafkaError) {
+    Buffer::ConstPointer thisptr = shared_from_this();
+    object.read(thisptr);
+    return thisptr;
 }
 
 Buffer::Buffer()

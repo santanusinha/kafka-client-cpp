@@ -14105,7 +14105,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/common/Makefile src/client/Makefile test/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/common/Makefile src/messages/Makefile src/client/Makefile test/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -15186,6 +15186,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/common/Makefile") CONFIG_FILES="$CONFIG_FILES src/common/Makefile" ;;
+    "src/messages/Makefile") CONFIG_FILES="$CONFIG_FILES src/messages/Makefile" ;;
     "src/client/Makefile") CONFIG_FILES="$CONFIG_FILES src/client/Makefile" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
 

@@ -14,8 +14,9 @@ libkafkaclient_la_CXXFLAGS = -Wall -Wextra -Weffc++
 
 libkafkaclient_la_LIBADD = \
                     $(top_builddir)/src/common/libcommon.la \
+                    $(top_builddir)/src/messages/libmessages.la \
                     -lboost_system -lzmq -lgrok -lboost_thread
 
-INCLUDES = -I . -I$(srcdir)/src/common/
+INCLUDES = -I . -I$(top_srcdir)/src/common/
 
 MAINTAINERCLEANFILES=Makefile.in

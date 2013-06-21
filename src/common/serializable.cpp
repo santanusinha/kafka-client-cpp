@@ -9,4 +9,7 @@ namespace Kafka {
 Serializable::Serializable() {
 }
 
+Serializable::~Serializable() {
+}
+
 } //namespace Kafka

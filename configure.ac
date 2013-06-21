@@ -21,6 +21,7 @@ AC_CONFIG_FILES([
 Makefile
 src/Makefile
 src/common/Makefile
+src/messages/Makefile
 src/client/Makefile
 test/Makefile
 ])
