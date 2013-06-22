@@ -9,8 +9,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "error.h"
 
@@ -19,7 +19,8 @@ namespace Kafka { class Deserializable; }
 
 namespace Kafka {
 
-class Buffer: public boost::noncopyable, public boost::enable_shared_from_this<Buffer> {
+class Buffer: public boost::noncopyable,
+			public boost::enable_shared_from_this<Buffer> {
     public:
         typedef boost::shared_ptr<Buffer> Pointer;
         typedef boost::shared_ptr<const Buffer> ConstPointer;
@@ -29,6 +30,8 @@ class Buffer: public boost::noncopyable, public boost::enable_shared_from_this<B
 
         static ConstPointer
         create_for_read(const boost::asio::const_buffer &buffer);
+
+        Buffer();
 
         ~Buffer() throw();
 
@@ -107,9 +110,13 @@ class Buffer: public boost::noncopyable, public boost::enable_shared_from_this<B
         size() const;
 
     private:
-        Buffer();
 
         Buffer(const boost::asio::const_buffer &buffer);
+
+        Buffer(const Buffer &);
+
+        Buffer &
+        operator =(const Buffer &);
 
         void
         swap(Buffer &rhs) throw();

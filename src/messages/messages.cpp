@@ -1,84 +1,14 @@
 #include "messages.h"
 
-#if 0
-namespace {
-
-template<typename T>
-struct IsPrimitive {
-    enum { value = 0 };
-};
-
-template<>
-struct IsPrimitive<std::string> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<int16_t> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<uint16_t> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<int32_t> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<uint32_t> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<int64_t> {
-    enum { value = 1 };
-};
-
-template<>
-struct IsPrimitive<uint64_t> {
-    enum { value = 1 };
-};
-
-
-template<typename T>
-void
-read_vector( std::vector<T> &elements, const Kafka::ConstBufferPtr &buffer ) {
-    int32_t num_elements = 0;
-    for( int32_t i = 0; i < num_elements; i++ ) {
-        T object;
-        if(IsPrimitive<T>::value) {
-            buffer->read(object);
-        }
-        else {
-            object.read(buffer);
-        }
-        elements.push_back(object);
-    }
-}
-
-template<typename T>
-void
-write_vector( const std::vector<T> &elements, const Kafka::BufferPtr &buffer ) {
-    int32_t num_elements = elements.size();
-    for(typename std::vector<T>::const_iterator it = elements.begin();
-                it != elements.end(); ++it ) {
-        if( IsPrimitive<T>::value ) {
-            buffer->write(*it);
-        }
-        else {
-            (*it).save( buffer );
-        }
-    }
-}
-
-}
-#endif
-
 namespace Kafka {
+
+RequestHeader::RequestHeader()
+    :m_api(),
+    m_apiversion(),
+    m_correlation_id(),
+    m_client() {
+}
+
 void
 RequestHeader::save( const BufferPtr &buffer ) const {
     buffer->write(m_api)
@@ -87,10 +17,30 @@ RequestHeader::save( const BufferPtr &buffer ) const {
           ->write(m_client);
 }
 
+ResponseHeader::ResponseHeader()
+    :m_correlation_id() {
+}
+
+void
+ResponseHeader::read(const ConstBufferPtr &buffer) {
+    buffer->read(m_correlation_id);
+}
+
+MetadataRequest::MetadataRequest()
+    :m_header(),
+    m_topics() {
+}
+
 void
 MetadataRequest::save( const BufferPtr &buffer ) const {
     buffer->write(m_header)
           ->write(m_topics);
+}
+
+BrokerResponse::BrokerResponse()
+    :m_broker_id(),
+    m_hostname(),
+    m_port() {
 }
 
 void
@@ -98,6 +48,14 @@ BrokerResponse::read(const ConstBufferPtr &buffer) {
     buffer->read(m_broker_id)
           ->read(m_hostname)
           ->read(m_port);
+}
+
+PartitionMetadataResponse::PartitionMetadataResponse()
+    :m_partition_error_code(),
+    m_node_id(),
+    m_leader(),
+    m_replicas(),
+    m_isr() {
 }
 
 void
@@ -109,15 +67,28 @@ PartitionMetadataResponse::read(const ConstBufferPtr &buffer) {
           ->read(m_isr);
 }
 
+TopicMetadataResponse::TopicMetadataResponse()
+    :m_topic_error_code(),
+    m_partitions() {
+}
+
 void
 TopicMetadataResponse::read(const ConstBufferPtr &buffer) {
     buffer->read(m_topic_error_code)
+          ->read(m_topic_name)
           ->read(m_partitions);
+}
+
+MetadataResponse::MetadataResponse()
+    :m_header(),
+    m_brokers(),
+    m_topics() {
 }
 
 void
 MetadataResponse::read(const ConstBufferPtr &buffer) {
-    buffer->read(m_brokers)
+    buffer->read(m_header)
+          ->read(m_brokers)
           ->read(m_topics);
 }
 

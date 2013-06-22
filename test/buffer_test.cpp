@@ -5,6 +5,7 @@
 #include "buffer.h"
 
 #define BOOST_TEST_MODULE KafkaBuffer
+#include <byteswap.h>
 #include <boost/test/unit_test.hpp>
 #include "buffer.h"
 #include "serializable.h"
@@ -111,7 +112,7 @@ BOOST_AUTO_TEST_CASE (test_build)
 		->write("Hello World")
         ->finalize_header(); //<--sums up remaining part to first int
 
-	BOOST_REQUIRE(*(reinterpret_cast<int32_t *>(tmp->data())) == 41);
+	BOOST_REQUIRE(bswap_32(*(reinterpret_cast<int32_t *>(tmp->data()))) == 41);
 }
 
 BOOST_AUTO_TEST_CASE( test_object_ser )

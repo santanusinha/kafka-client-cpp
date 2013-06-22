@@ -24,6 +24,7 @@ src/common/Makefile
 src/messages/Makefile
 src/client/Makefile
 test/Makefile
+examples/Makefile
 ])
 
 AC_OUTPUT

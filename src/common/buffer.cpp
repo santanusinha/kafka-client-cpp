@@ -24,8 +24,8 @@ namespace Kafka {
 
 Buffer::Pointer
 Buffer::create_for_write() {
-    Pointer tmp( new Buffer() );
-    tmp->write(static_cast<int32_t>(0));
+    Pointer tmp = boost::make_shared<Buffer>();
+    tmp->write(static_cast<int32_t>(0)); //Setup size
     return tmp;
 }
 
@@ -35,6 +35,7 @@ Buffer::create_for_read(const boost::asio::const_buffer &buffer) {
 }
 
 Buffer::~Buffer() throw() {
+	std::cout<<"Destructed"<<std::endl;
     reset();
 }
 
@@ -107,7 +108,8 @@ Buffer::write( const Serializable &object ) {
 
 Buffer::Pointer
 Buffer::finalize_header() {
-    *(reinterpret_cast<int32_t *>(m_data)) = m_current_size - sizeof(int32_t);
+	int32_t *count = reinterpret_cast<int32_t *>(m_data);
+	*count = bswap_32(m_current_size - sizeof(int32_t));
     return shared_from_this();
 }
 
@@ -156,9 +158,12 @@ Buffer::ConstPointer
 Buffer::read(std::string &out_value) const throw(KafkaError) {
     int16_t length;
     read(length);
+    std::cout<<"Offset: "<<m_current_size<<std::endl;
     std::copy(reinterpret_cast<const char *>(m_data) + m_current_size,
                 reinterpret_cast<const char *>(m_data) + m_current_size + length,
                 std::back_inserter(out_value));
+    m_current_size += length;
+    std::cout<<"Offset After: "<<m_current_size<<std::endl;
     return shared_from_this();
 }
 
@@ -170,13 +175,18 @@ Buffer::read(Deserializable &object) const throw(KafkaError) {
 }
 
 Buffer::Buffer()
-    :m_data(),
+    :noncopyable(),
+	boost::enable_shared_from_this<Buffer>(),
+	m_data(),
     m_current_size(),
     m_actual_size() {
+	std::cout<<"This: "<<this<<std::endl;
 }
 
 Buffer::Buffer(const boost::asio::const_buffer &buffer)
-    :m_data(),
+    : noncopyable(),
+	boost::enable_shared_from_this<Buffer>(),
+	m_data(),
     m_current_size(),
     m_actual_size() {
     const void *in_data = boost::asio::buffer_cast<const void *>(buffer);
@@ -206,23 +216,26 @@ Buffer::swap(Buffer &out_tmp) throw() {
 
 void
 Buffer::write_16(void *mem) throw(KafkaError) {
-    void *target = get(2);
-    ::memcpy(target, mem, 2);
-    bswap_16(*reinterpret_cast<uint16_t *>(target));
+    //void *target = get(2);
+    //::memcpy(target, mem, 2);
+    //bswap_16(*reinterpret_cast<uint16_t *>(target));
+	*reinterpret_cast<uint16_t *>(get(2)) = bswap_16(*reinterpret_cast<uint16_t *>(mem));	
 }
 
 void
 Buffer::write_32(void *mem) throw(KafkaError) {
-    void *target = get(4);
-    ::memcpy(target, mem, 4);
-    bswap_32(*reinterpret_cast<uint32_t *>(target));
+    //void *target = get(4);
+    //::memcpy(target, mem, 4);
+    //bswap_32(*reinterpret_cast<uint32_t *>(target));
+	*reinterpret_cast<uint32_t *>(get(4)) = bswap_32(*reinterpret_cast<uint32_t *>(mem));	
 }
 
 void
 Buffer::write_64(void *mem) throw(KafkaError) {
-    void *target = get(8);
-    ::memcpy(target, mem, 8);
-    bswap_64(*reinterpret_cast<uint64_t *>(target));
+    //void *target = get(8);
+    //::memcpy(target, mem, 8);
+    //bswap_64(*reinterpret_cast<uint64_t *>(target));
+	*reinterpret_cast<uint64_t *>(get(8)) = bswap_64(*reinterpret_cast<uint64_t *>(mem));	
 }
 
 void *
@@ -245,22 +258,28 @@ Buffer::get(size_t size) throw(KafkaError) {
 
 const void *
 Buffer::read_16() const throw(KafkaError) {
-    const void *mem = get(2);
-    bswap_16(*reinterpret_cast<const uint16_t *>(mem));
+    uint16_t *mem = const_cast<uint16_t *>(reinterpret_cast<const uint16_t *>(get(2)));
+    *mem = bswap_16(*mem);
     return mem;
 }
 
 const void *
 Buffer::read_32() const throw(KafkaError) {
-    const void *mem = get(4);
-    bswap_32(*reinterpret_cast<const uint32_t *>(mem));
+    //const void *mem = get(4);
+    //bswap_32(*reinterpret_cast<const uint32_t *>(mem));
+    //return mem;
+    uint32_t *mem = const_cast<uint32_t *>(reinterpret_cast<const uint32_t *>(get(4)));
+    *mem = bswap_32(*mem);
     return mem;
 }
 
 const void *
 Buffer::read_64() const throw(KafkaError) {
-    const void *mem = get(8);
-    bswap_64(*reinterpret_cast<const uint64_t *>(mem));
+    //const void *mem = get(8);
+    //bswap_64(*reinterpret_cast<const uint64_t *>(mem));
+    //return mem;
+    uint64_t *mem = const_cast<uint64_t *>(reinterpret_cast<const uint64_t *>(get(8)));
+    *mem = bswap_64(*mem);
     return mem;
 }
 

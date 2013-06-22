@@ -1,10 +1,20 @@
 lib_LTLIBRARIES = libkafkaclient.la
 
 libkafkaclient_la_SOURCES = \
+                command.cpp \
+                commandexecutor.cpp \
+                metaresponse.cpp \
+                metacommand.cpp \
 				client.cpp
             
 
 include_HEADERS = \
+                commandtype.h \
+                command.h \
+                commandexecutor.h \
+				kafkaerrorcodes.h \
+                metaresponse.h \
+                metacommand.h \
 				client.h
 					
 
@@ -17,6 +27,8 @@ libkafkaclient_la_LIBADD = \
                     $(top_builddir)/src/messages/libmessages.la \
                     -lboost_system -lzmq -lgrok -lboost_thread
 
-INCLUDES = -I . -I$(top_srcdir)/src/common/
+INCLUDES = -I . \
+		-I$(top_srcdir)/src/common/ \
+		-I$(top_srcdir)/src/messages/
 
 MAINTAINERCLEANFILES=Makefile.in
