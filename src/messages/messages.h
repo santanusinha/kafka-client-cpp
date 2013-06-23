@@ -88,6 +88,63 @@ struct MetadataResponse: public Deserializable {
     read(const ConstBufferPtr &buffer);
 };
 
+struct MessageRequest: public Serializable {
+    int32_t m_crc;
+    int8_t  m_magic_byte;
+    int8_t  m_attributes;
+    std::vector<uint8_t> m_key;
+    std::vector<uint8_t> m_data;
+
+    MessageRequest();
+
+    void
+    save(const BufferPtr &buffer) const;
+};
+
+struct MessageSetRequest: public Serializable  {
+    int64_t m_offset;
+    int32_t m_message_size;
+    MessageRequest m_message;
+
+    MessageSetRequest();
+
+    void
+    save(const BufferPtr &buffer) const;
+};
+
+struct ProducerTopicMessagesRequest: public Serializable {
+    int32_t m_partition;
+    int32_t m_message_set_size;
+    std::vector<MessageSetRequest> m_message_set;
+
+    ProducerTopicMessagesRequest();
+
+    void
+    save(const BufferPtr &buffer) const;
+}; 
+
+struct ProduceTopicRequest: public Serializable {
+    std::string m_topic_name;
+    std::vector<ProducerTopicMessagesRequest> m_messages;
+
+    ProduceTopicRequest();
+
+    void
+    save(const BufferPtr &buffer) const;
+};
+
+struct ProduceRequest {
+    RequestHeader m_header;
+    int16_t       m_required_acks;
+    int32_t       m_timeout;
+    std::vector<ProducerTopicMessagesRequest> m_topics;
+
+    ProduceRequest();
+
+    void
+    save(const BufferPtr &buffer) const;
+};
+
 } //namespace Kafka
 
 #endif // KAFKA_MESSAGES_H

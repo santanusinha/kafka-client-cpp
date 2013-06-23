@@ -50,6 +50,18 @@ Buffer::reset() throw() {
 }
 
 Buffer::Pointer
+Buffer::write(int8_t in_value) throw(KafkaError) {
+    write_8(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
+Buffer::write(uint8_t in_value) throw(KafkaError) {
+    write_8(&in_value);
+    return shared_from_this();
+}
+
+Buffer::Pointer
 Buffer::write(int64_t in_value) throw(KafkaError) {
     write_64(&in_value);
     return shared_from_this();
@@ -116,6 +128,18 @@ Buffer::finalize_header() {
 boost::asio::const_buffer
 Buffer::build() throw(KafkaError) {
     return boost::asio::buffer(m_data, m_current_size);
+}
+
+Buffer::ConstPointer
+Buffer::read(int8_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const int8_t *>(read_8());
+    return shared_from_this();
+}
+
+Buffer::ConstPointer
+Buffer::read(uint8_t &out_value) const throw(KafkaError) {
+    out_value = *reinterpret_cast<const uint8_t *>(read_8());
+    return shared_from_this();
 }
 
 Buffer::ConstPointer
@@ -215,26 +239,23 @@ Buffer::swap(Buffer &out_tmp) throw() {
 }
 
 void
+Buffer::write_8(void *mem) throw(KafkaError) {
+    //No byteswap necessary for a byte
+	*reinterpret_cast<uint8_t *>(get(1)) = *reinterpret_cast<uint8_t *>(mem);	
+}
+
+void
 Buffer::write_16(void *mem) throw(KafkaError) {
-    //void *target = get(2);
-    //::memcpy(target, mem, 2);
-    //bswap_16(*reinterpret_cast<uint16_t *>(target));
 	*reinterpret_cast<uint16_t *>(get(2)) = bswap_16(*reinterpret_cast<uint16_t *>(mem));	
 }
 
 void
 Buffer::write_32(void *mem) throw(KafkaError) {
-    //void *target = get(4);
-    //::memcpy(target, mem, 4);
-    //bswap_32(*reinterpret_cast<uint32_t *>(target));
 	*reinterpret_cast<uint32_t *>(get(4)) = bswap_32(*reinterpret_cast<uint32_t *>(mem));	
 }
 
 void
 Buffer::write_64(void *mem) throw(KafkaError) {
-    //void *target = get(8);
-    //::memcpy(target, mem, 8);
-    //bswap_64(*reinterpret_cast<uint64_t *>(target));
 	*reinterpret_cast<uint64_t *>(get(8)) = bswap_64(*reinterpret_cast<uint64_t *>(mem));	
 }
 
@@ -254,6 +275,13 @@ Buffer::get(size_t size) throw(KafkaError) {
     void *ptr = reinterpret_cast<char *>(m_data) + m_current_size;
     m_current_size += size;
     return ptr;
+}
+
+const void *
+Buffer::read_8() const throw(KafkaError) {
+    //No byteswap necessary for a byte
+    uint8_t *mem = const_cast<uint8_t *>(reinterpret_cast<const uint8_t *>(get(1)));
+    return mem;
 }
 
 const void *

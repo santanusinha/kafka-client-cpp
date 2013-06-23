@@ -39,6 +39,12 @@ class Buffer: public boost::noncopyable,
         reset() throw();
 
         Pointer
+        write(int8_t in_value) throw(KafkaError);
+
+        Pointer
+        write(uint8_t in_value) throw(KafkaError);
+
+        Pointer
         write(int64_t in_value) throw(KafkaError);
 
         Pointer
@@ -74,6 +80,12 @@ class Buffer: public boost::noncopyable,
 
         boost::asio::const_buffer
         build() throw(KafkaError);
+
+        ConstPointer
+        read(int8_t &out_value) const throw(KafkaError);
+
+        ConstPointer
+        read(uint8_t &out_value) const throw(KafkaError);
 
         ConstPointer
         read(int64_t &out_value) const throw(KafkaError);
@@ -122,6 +134,9 @@ class Buffer: public boost::noncopyable,
         swap(Buffer &rhs) throw();
 
         void
+        write_8(void *mem) throw(KafkaError);
+
+        void
         write_16(void *mem) throw(KafkaError);
 
         void
@@ -132,6 +147,9 @@ class Buffer: public boost::noncopyable,
 
         void *
         get(size_t size) throw(KafkaError);
+
+        const void *
+        read_8() const throw(KafkaError);
 
         const void *
         read_16() const throw(KafkaError);

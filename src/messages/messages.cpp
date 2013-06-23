@@ -92,4 +92,76 @@ MetadataResponse::read(const ConstBufferPtr &buffer) {
           ->read(m_topics);
 }
 
+MessageRequest::MessageRequest()
+    :m_crc(),
+    m_magic_byte(),
+    m_attributes(),
+    m_key(),
+    m_data() {
+}
+
+void
+MessageRequest::save(const BufferPtr &buffer) const {
+    buffer->write(m_crc)
+          ->write(m_magic_byte)
+          ->write(m_attributes)
+          ->write(m_key)
+          ->write(m_data);
+}
+
+MessageSetRequest::MessageSetRequest()
+    :m_offset(),
+    m_message_size() {
+}
+
+void
+MessageSetRequest::save(const BufferPtr &buffer) const {
+    buffer->write(m_offset)
+          ->write(m_message_size)
+          ->write(m_message);
+}
+
+ProducerTopicMessagesRequest::ProducerTopicMessagesRequest()
+    :m_partition(),
+    m_message_set_size(),
+    m_message_set() {
+}
+
+void
+ProducerTopicMessagesRequest::save(const BufferPtr &buffer) const {
+    buffer->write(m_partition)
+          ->write(m_message_set_size);
+    //Message set does not have a header
+    for(std::vector<MessageSetRequest>::const_iterator msg_set = m_message_set.begin();
+                    msg_set != m_message_set.end(); ++msg_set ) {
+        buffer->write(*msg_set);
+    }
+} 
+
+ProduceTopicRequest::ProduceTopicRequest()
+    :m_topic_name(),
+    m_messages() {
+}
+
+void
+ProduceTopicRequest::save(const BufferPtr &buffer) const {
+    buffer->write(m_topic_name)
+          ->write(m_messages);
+}
+
+ProduceRequest::ProduceRequest()
+    :m_header(),
+    m_required_acks(),
+    m_timeout(),
+    m_topics() {
+}
+
+void
+ProduceRequest::save(const BufferPtr &buffer) const {
+    buffer->write(m_header)
+          ->write(m_required_acks)
+          ->write(m_timeout)
+          ->write(m_topics);
+}
+
 } //namespace Kafka
