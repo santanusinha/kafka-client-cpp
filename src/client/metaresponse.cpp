@@ -12,10 +12,15 @@ Partition::Partition()
     m_leader() {
 }
 
-Metadata::Metadata()
-    :m_num_partitions(),
-    m_brokers(),
+Topic::Topic()
+    :m_name(),
+    m_num_partitions(),
     m_partitions() {
+}
+
+Metadata::Metadata()
+    :m_brokers(),
+    m_topics() {
 }
 
 } //namespace Kafka

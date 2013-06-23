@@ -73,6 +73,7 @@ libkafkaclient_la_DEPENDENCIES =  \
 	$(top_builddir)/src/common/libcommon.la \
 	$(top_builddir)/src/messages/libmessages.la
 am_libkafkaclient_la_OBJECTS = libkafkaclient_la-command.lo \
+	libkafkaclient_la-connectionpool.lo \
 	libkafkaclient_la-commandexecutor.lo \
 	libkafkaclient_la-metaresponse.lo \
 	libkafkaclient_la-metacommand.lo libkafkaclient_la-client.lo
@@ -219,14 +220,18 @@ top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libkafkaclient.la
 libkafkaclient_la_SOURCES = \
                 command.cpp \
+				connectionpool.cpp \
                 commandexecutor.cpp \
                 metaresponse.cpp \
                 metacommand.cpp \
 				client.cpp
 
 include_HEADERS = \
+                types.h \
+                partitioninfo.h \
                 commandtype.h \
                 command.h \
+				connectionpool.h \
                 commandexecutor.h \
 				kafkaerrorcodes.h \
                 metaresponse.h \
@@ -322,6 +327,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-client.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-command.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-commandexecutor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-connectionpool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-metacommand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-metaresponse.Plo@am__quote@
 
@@ -352,6 +358,13 @@ libkafkaclient_la-command.lo: command.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='command.cpp' object='libkafkaclient_la-command.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -c -o libkafkaclient_la-command.lo `test -f 'command.cpp' || echo '$(srcdir)/'`command.cpp
+
+libkafkaclient_la-connectionpool.lo: connectionpool.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -MT libkafkaclient_la-connectionpool.lo -MD -MP -MF $(DEPDIR)/libkafkaclient_la-connectionpool.Tpo -c -o libkafkaclient_la-connectionpool.lo `test -f 'connectionpool.cpp' || echo '$(srcdir)/'`connectionpool.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libkafkaclient_la-connectionpool.Tpo $(DEPDIR)/libkafkaclient_la-connectionpool.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='connectionpool.cpp' object='libkafkaclient_la-connectionpool.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -c -o libkafkaclient_la-connectionpool.lo `test -f 'connectionpool.cpp' || echo '$(srcdir)/'`connectionpool.cpp
 
 libkafkaclient_la-commandexecutor.lo: commandexecutor.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -MT libkafkaclient_la-commandexecutor.lo -MD -MP -MF $(DEPDIR)/libkafkaclient_la-commandexecutor.Tpo -c -o libkafkaclient_la-commandexecutor.lo `test -f 'commandexecutor.cpp' || echo '$(srcdir)/'`commandexecutor.cpp

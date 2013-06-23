@@ -2,6 +2,7 @@
 #define KAFKA_HOSTDETAILS_H
 
 #include <string>
+#include <vector>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -40,6 +41,7 @@ class HostDetails {
 
 typedef HostDetails::Pointer HostDetailsPtr;
 typedef HostDetails::ConstPointer ConstHostDetailsPtr;
+typedef std::vector<HostDetailsPtr> HostList;
 
 inline std::string
 HostDetails::host() const {

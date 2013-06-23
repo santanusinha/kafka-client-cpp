@@ -27,10 +27,19 @@ struct Partition {
 
 typedef boost::shared_ptr<Partition> PartitionPtr;
 
-struct Metadata {
+struct Topic {
+    std::string m_name;
     size_t m_num_partitions;
-    std::vector<BrokerPtr> m_brokers; 
     std::vector<PartitionPtr> m_partitions; 
+
+    Topic();
+};
+
+typedef boost::shared_ptr<Topic> TopicPtr;
+
+struct Metadata {
+    std::vector<BrokerPtr> m_brokers;
+    std::vector<TopicPtr> m_topics;
 
     Metadata();
 };

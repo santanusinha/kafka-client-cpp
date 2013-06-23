@@ -9,7 +9,11 @@ using namespace Kafka;
 int main() {
     boost::shared_ptr<CommandExecutor> executor = boost::make_shared<CommandExecutor>();
     boost::thread main_loop( boost::bind( &CommandExecutor::start , executor ) );
-    executor->connect();
+    HostList broker_list;
+    broker_list.push_back( boost::make_shared<HostDetails>( "127.0.0.1", 9091 ) );
+    broker_list.push_back( boost::make_shared<HostDetails>( "127.0.0.1", 9092 ) );
+    broker_list.push_back( boost::make_shared<HostDetails>( "127.0.0.1", 9093 ) );
+    executor->connect(broker_list);
     MetadataPtr metadata;
     MetaCommand::create()->topic("mytopic")->run(metadata, executor);
     std::cout<<"Completed Meta request"<<std::endl;

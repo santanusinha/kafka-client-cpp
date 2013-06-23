@@ -8,6 +8,7 @@
 
 #include "buffer.h"
 #include "hostdetails.h"
+#include "partitioninfo.h"
 
 namespace Kafka {
 
@@ -25,8 +26,8 @@ class Command: public boost::noncopyable {
         virtual BufferPtr 
         get_request() = 0;
 
-        virtual int32_t
-        get_partition_id() = 0;
+        virtual PartitionInfoPtr
+        get_partition() = 0;
 
     protected:
         Command();

@@ -2,6 +2,7 @@ lib_LTLIBRARIES = libkafkaclient.la
 
 libkafkaclient_la_SOURCES = \
                 command.cpp \
+				connectionpool.cpp \
                 commandexecutor.cpp \
                 metaresponse.cpp \
                 metacommand.cpp \
@@ -9,8 +10,11 @@ libkafkaclient_la_SOURCES = \
             
 
 include_HEADERS = \
+                types.h \
+                partitioninfo.h \
                 commandtype.h \
                 command.h \
+				connectionpool.h \
                 commandexecutor.h \
 				kafkaerrorcodes.h \
                 metaresponse.h \

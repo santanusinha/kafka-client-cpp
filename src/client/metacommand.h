@@ -31,8 +31,8 @@ class MetaCommand: public Command, public boost::enable_shared_from_this<MetaCom
         BufferPtr 
         get_request();
 
-        int32_t
-        get_partition_id();
+        PartitionInfoPtr 
+        get_partition();
 
         Pointer
         topic(const std::string &in_topic);
@@ -47,8 +47,8 @@ class MetaCommand: public Command, public boost::enable_shared_from_this<MetaCom
         run(MetadataPtr &result, const boost::shared_ptr<CommandExecutor> &executor ) throw(KafkaError);
 
     private:
-        std::string        m_topic;
-        CompletionFunction m_completion_handler;
+        std::vector<std::string> m_topics;
+        CompletionFunction       m_completion_handler;
 };
 
 typedef MetaCommand::Pointer MetaCommandPtr;
