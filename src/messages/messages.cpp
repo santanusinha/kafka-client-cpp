@@ -102,23 +102,13 @@ MessageRequest::MessageRequest()
 
 void
 MessageRequest::save(const BufferPtr &buffer) const {
-    buffer->write(m_crc)
-          ->write(m_magic_byte)
-          ->write(m_attributes)
-          ->write(m_key)
-          ->write(m_data);
-}
-
-MessageSetRequest::MessageSetRequest()
-    :m_offset(),
-    m_message_size() {
-}
-
-void
-MessageSetRequest::save(const BufferPtr &buffer) const {
     buffer->write(m_offset)
           ->write(m_message_size)
-          ->write(m_message);
+          ->write(m_crc)
+          ->write(m_magic_byte)
+          ->write(m_attributes)
+          ->write(static_cast<int32_t>(-1))//m_key);
+          ->write(m_data);
 }
 
 ProducerTopicMessagesRequest::ProducerTopicMessagesRequest()
@@ -132,7 +122,7 @@ ProducerTopicMessagesRequest::save(const BufferPtr &buffer) const {
     buffer->write(m_partition)
           ->write(m_message_set_size);
     //Message set does not have a header
-    for(std::vector<MessageSetRequest>::const_iterator msg_set = m_message_set.begin();
+    for(std::vector<MessageRequest>::const_iterator msg_set = m_message_set.begin();
                     msg_set != m_message_set.end(); ++msg_set ) {
         buffer->write(*msg_set);
     }
@@ -162,6 +152,40 @@ ProduceRequest::save(const BufferPtr &buffer) const {
           ->write(m_required_acks)
           ->write(m_timeout)
           ->write(m_topics);
+}
+
+MessagePartitionInfoResponse::MessagePartitionInfoResponse()
+    :m_partition(),
+    m_error_code(),
+    m_offset() {
+}
+
+void
+MessagePartitionInfoResponse::read(const ConstBufferPtr &buffer) {
+    buffer->read(m_partition)
+          ->read(m_error_code)
+          ->read(m_offset);
+}
+
+MessageTopicResponse::MessageTopicResponse()
+    :m_topic(),
+    m_message_info() {
+}
+
+void
+MessageTopicResponse::read(const ConstBufferPtr &buffer) {
+    buffer->read(m_topic)
+          ->read(m_message_info);
+}
+
+MessageProduceResponse::MessageProduceResponse()
+    :m_topics() {
+}
+
+void
+MessageProduceResponse::read(const ConstBufferPtr &buffer) {
+    buffer->read(m_header)
+          ->read(m_topics);
 }
 
 } //namespace Kafka

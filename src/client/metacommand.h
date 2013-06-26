@@ -7,6 +7,7 @@
 #include "command.h"
 #include "error.h"
 #include "metaresponse.h"
+#include "partitioninfo.h"
 
 namespace Kafka { class CommandExecutor; }
 

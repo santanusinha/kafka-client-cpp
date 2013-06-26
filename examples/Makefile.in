@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = kafkametareader$(EXEEXT)
+bin_PROGRAMS = kafkametareader$(EXEEXT) messagesend$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,6 +52,11 @@ kafkametareader_OBJECTS = $(am_kafkametareader_OBJECTS)
 kafkametareader_LDADD = $(LDADD)
 kafkametareader_DEPENDENCIES =  \
 	$(top_builddir)/src/client/libkafkaclient.la
+am_messagesend_OBJECTS = send_message.$(OBJEXT)
+messagesend_OBJECTS = $(am_messagesend_OBJECTS)
+messagesend_LDADD = $(LDADD)
+messagesend_DEPENDENCIES =  \
+	$(top_builddir)/src/client/libkafkaclient.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/./config/depcomp
 am__depfiles_maybe = depfiles
@@ -65,8 +70,8 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(kafkametareader_SOURCES)
-DIST_SOURCES = $(kafkametareader_SOURCES)
+SOURCES = $(kafkametareader_SOURCES) $(messagesend_SOURCES)
+DIST_SOURCES = $(kafkametareader_SOURCES) $(messagesend_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -187,6 +192,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 kafkametareader_SOURCES = meta_example.cpp
+messagesend_SOURCES = send_message.cpp
 INCLUDES = \
 		-I $(top_srcdir)/src/common/ \
 		-I $(top_srcdir)/src/messages/ \
@@ -275,6 +281,9 @@ clean-binPROGRAMS:
 kafkametareader$(EXEEXT): $(kafkametareader_OBJECTS) $(kafkametareader_DEPENDENCIES) 
 	@rm -f kafkametareader$(EXEEXT)
 	$(CXXLINK) $(kafkametareader_OBJECTS) $(kafkametareader_LDADD) $(LIBS)
+messagesend$(EXEEXT): $(messagesend_OBJECTS) $(messagesend_DEPENDENCIES) 
+	@rm -f messagesend$(EXEEXT)
+	$(CXXLINK) $(messagesend_OBJECTS) $(messagesend_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -283,6 +292,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/meta_example.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_message.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

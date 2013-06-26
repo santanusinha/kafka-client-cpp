@@ -89,7 +89,9 @@ struct MetadataResponse: public Deserializable {
 };
 
 struct MessageRequest: public Serializable {
-    int32_t m_crc;
+    int64_t m_offset;
+    int32_t m_message_size;
+    uint32_t m_crc;
     int8_t  m_magic_byte;
     int8_t  m_attributes;
     std::vector<uint8_t> m_key;
@@ -101,21 +103,10 @@ struct MessageRequest: public Serializable {
     save(const BufferPtr &buffer) const;
 };
 
-struct MessageSetRequest: public Serializable  {
-    int64_t m_offset;
-    int32_t m_message_size;
-    MessageRequest m_message;
-
-    MessageSetRequest();
-
-    void
-    save(const BufferPtr &buffer) const;
-};
-
 struct ProducerTopicMessagesRequest: public Serializable {
     int32_t m_partition;
     int32_t m_message_set_size;
-    std::vector<MessageSetRequest> m_message_set;
+    std::vector<MessageRequest> m_message_set;
 
     ProducerTopicMessagesRequest();
 
@@ -133,16 +124,47 @@ struct ProduceTopicRequest: public Serializable {
     save(const BufferPtr &buffer) const;
 };
 
-struct ProduceRequest {
+struct ProduceRequest: public Serializable {
     RequestHeader m_header;
     int16_t       m_required_acks;
     int32_t       m_timeout;
-    std::vector<ProducerTopicMessagesRequest> m_topics;
+    std::vector<ProduceTopicRequest> m_topics;
 
     ProduceRequest();
 
     void
     save(const BufferPtr &buffer) const;
+};
+
+struct MessagePartitionInfoResponse: public Deserializable {
+    int32_t m_partition;
+    int16_t m_error_code;
+    int64_t m_offset;
+
+    MessagePartitionInfoResponse();
+
+    void
+    read(const ConstBufferPtr &buffer);
+};
+
+struct MessageTopicResponse: public Deserializable {
+    std::string m_topic;
+    std::vector<MessagePartitionInfoResponse> m_message_info;
+
+    MessageTopicResponse();
+
+    void
+    read(const ConstBufferPtr &buffer);
+};
+
+struct MessageProduceResponse: public Deserializable {
+    ResponseHeader m_header;
+    std::vector<MessageTopicResponse> m_topics;
+
+    MessageProduceResponse();
+
+    void
+    read(const ConstBufferPtr &buffer);
 };
 
 } //namespace Kafka

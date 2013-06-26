@@ -40,6 +40,9 @@ class CommandExecutor {
         void
         reset_connections( const MetadataPtr &metadata );
 
+        void
+        reset();
+
         boost::asio::io_service m_io_service;
         boost::scoped_ptr<boost::asio::io_service::work> m_work;
 

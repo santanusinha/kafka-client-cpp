@@ -6,6 +6,8 @@ libkafkaclient_la_SOURCES = \
                 commandexecutor.cpp \
                 metaresponse.cpp \
                 metacommand.cpp \
+				produceresponse.cpp \
+                producecommand.cpp \
 				client.cpp
             
 
@@ -19,6 +21,8 @@ include_HEADERS = \
 				kafkaerrorcodes.h \
                 metaresponse.h \
                 metacommand.h \
+                produceresponse.h \
+                producecommand.h \
 				client.h
 					
 

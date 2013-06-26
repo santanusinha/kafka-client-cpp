@@ -3,6 +3,7 @@
 #endif
 
 #include <set>
+#include <iostream>
 #include <boost/make_shared.hpp>
 #include <boost/thread.hpp>
 
@@ -11,7 +12,14 @@
 
 namespace {
 
-typedef std::map<Kafka::PartitionInfoPtr, Kafka::Socket> SocketMap;
+struct compare {
+bool
+operator ()(const Kafka::PartitionInfoPtr &lhs, const Kafka::PartitionInfoPtr &rhs) {
+    return *lhs < *rhs;
+}
+};
+
+typedef std::map<Kafka::PartitionInfoPtr, Kafka::Socket, compare> SocketMap;
 
 }
 
@@ -51,6 +59,7 @@ ConnectionPool::setup_broker_connection(const HostList &brokers) throw(KafkaErro
             m_meta_channel = Socket( new boost::asio::ip::tcp::socket(m_io_service) );
             m_meta_channel->connect(end, error);
             if(!error) {
+                std::cout<<"BROKER CONNECTION INITIALIZED"<<std::endl;
                 break; //Connection established
             }
         }

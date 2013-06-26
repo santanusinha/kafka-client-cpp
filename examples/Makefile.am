@@ -1,6 +1,8 @@
-bin_PROGRAMS = kafkametareader
+bin_PROGRAMS = kafkametareader messagesend
 
 kafkametareader_SOURCES = meta_example.cpp
+
+messagesend_SOURCES = send_message.cpp
 
 INCLUDES = \
 		-I $(top_srcdir)/src/common/ \

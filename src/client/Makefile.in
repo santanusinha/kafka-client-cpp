@@ -76,7 +76,10 @@ am_libkafkaclient_la_OBJECTS = libkafkaclient_la-command.lo \
 	libkafkaclient_la-connectionpool.lo \
 	libkafkaclient_la-commandexecutor.lo \
 	libkafkaclient_la-metaresponse.lo \
-	libkafkaclient_la-metacommand.lo libkafkaclient_la-client.lo
+	libkafkaclient_la-metacommand.lo \
+	libkafkaclient_la-produceresponse.lo \
+	libkafkaclient_la-producecommand.lo \
+	libkafkaclient_la-client.lo
 libkafkaclient_la_OBJECTS = $(am_libkafkaclient_la_OBJECTS)
 libkafkaclient_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
@@ -224,6 +227,8 @@ libkafkaclient_la_SOURCES = \
                 commandexecutor.cpp \
                 metaresponse.cpp \
                 metacommand.cpp \
+				produceresponse.cpp \
+                producecommand.cpp \
 				client.cpp
 
 include_HEADERS = \
@@ -236,6 +241,8 @@ include_HEADERS = \
 				kafkaerrorcodes.h \
                 metaresponse.h \
                 metacommand.h \
+                produceresponse.h \
+                producecommand.h \
 				client.h
 
 libkafkaclient_la_CPPFLAGS = -DBOOST_SPIRIT_THREADSAFE
@@ -330,6 +337,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-connectionpool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-metacommand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-metaresponse.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-producecommand.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkafkaclient_la-produceresponse.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -386,6 +395,20 @@ libkafkaclient_la-metacommand.lo: metacommand.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='metacommand.cpp' object='libkafkaclient_la-metacommand.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -c -o libkafkaclient_la-metacommand.lo `test -f 'metacommand.cpp' || echo '$(srcdir)/'`metacommand.cpp
+
+libkafkaclient_la-produceresponse.lo: produceresponse.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -MT libkafkaclient_la-produceresponse.lo -MD -MP -MF $(DEPDIR)/libkafkaclient_la-produceresponse.Tpo -c -o libkafkaclient_la-produceresponse.lo `test -f 'produceresponse.cpp' || echo '$(srcdir)/'`produceresponse.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libkafkaclient_la-produceresponse.Tpo $(DEPDIR)/libkafkaclient_la-produceresponse.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='produceresponse.cpp' object='libkafkaclient_la-produceresponse.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -c -o libkafkaclient_la-produceresponse.lo `test -f 'produceresponse.cpp' || echo '$(srcdir)/'`produceresponse.cpp
+
+libkafkaclient_la-producecommand.lo: producecommand.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -MT libkafkaclient_la-producecommand.lo -MD -MP -MF $(DEPDIR)/libkafkaclient_la-producecommand.Tpo -c -o libkafkaclient_la-producecommand.lo `test -f 'producecommand.cpp' || echo '$(srcdir)/'`producecommand.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libkafkaclient_la-producecommand.Tpo $(DEPDIR)/libkafkaclient_la-producecommand.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='producecommand.cpp' object='libkafkaclient_la-producecommand.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -c -o libkafkaclient_la-producecommand.lo `test -f 'producecommand.cpp' || echo '$(srcdir)/'`producecommand.cpp
 
 libkafkaclient_la-client.lo: client.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkafkaclient_la_CPPFLAGS) $(CPPFLAGS) $(libkafkaclient_la_CXXFLAGS) $(CXXFLAGS) -MT libkafkaclient_la-client.lo -MD -MP -MF $(DEPDIR)/libkafkaclient_la-client.Tpo -c -o libkafkaclient_la-client.lo `test -f 'client.cpp' || echo '$(srcdir)/'`client.cpp

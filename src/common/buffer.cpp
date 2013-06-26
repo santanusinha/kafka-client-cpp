@@ -35,7 +35,6 @@ Buffer::create_for_read(const boost::asio::const_buffer &buffer) {
 }
 
 Buffer::~Buffer() throw() {
-	std::cout<<"Destructed"<<std::endl;
     reset();
 }
 
@@ -182,12 +181,10 @@ Buffer::ConstPointer
 Buffer::read(std::string &out_value) const throw(KafkaError) {
     int16_t length;
     read(length);
-    std::cout<<"Offset: "<<m_current_size<<std::endl;
     std::copy(reinterpret_cast<const char *>(m_data) + m_current_size,
                 reinterpret_cast<const char *>(m_data) + m_current_size + length,
                 std::back_inserter(out_value));
     m_current_size += length;
-    std::cout<<"Offset After: "<<m_current_size<<std::endl;
     return shared_from_this();
 }
 
@@ -204,7 +201,6 @@ Buffer::Buffer()
 	m_data(),
     m_current_size(),
     m_actual_size() {
-	std::cout<<"This: "<<this<<std::endl;
 }
 
 Buffer::Buffer(const boost::asio::const_buffer &buffer)
