@@ -6,9 +6,6 @@
 
 using namespace Kafka;
 
-
-
-
 struct Worker {
     boost::shared_ptr<CommandExecutor> m_executor;
     boost::mutex m_lock;
@@ -35,14 +32,17 @@ struct Worker {
             if( to_stop ) {
                 break;
             }
+            ProduceResponsePtr response;
             ProduceCommand::create()->topic("precogtest")
                             ->partition(m_partiton)
                             ->ack_type(-1)
                             ->message("Test message")
-                            //->message("Test message 2")
+//                            ->message("Test message 2")
+//                            ->message("Test message 3")
                             ->completion_handler(
                                 boost::bind(&Worker::topic_message_response_handler, this, _1))
                             ->run(m_executor);
+            break;
         }
     }
 

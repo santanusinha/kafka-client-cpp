@@ -6,11 +6,11 @@ libcommon_la_SOURCES = \
 			buffer.cpp \
             hostdetails.cpp
 
-noinst_HEADERS = \
-            buffer.h \
+noinst_HEADERS =  \
 			serializable.h \
 			deserializable.h
 
 include_HEADERS = \
+            buffer.h \
 			error.h \
             hostdetails.h

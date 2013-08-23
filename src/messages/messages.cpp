@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "messages.h"
 
 namespace Kafka {
@@ -122,9 +124,12 @@ ProducerTopicMessagesRequest::save(const BufferPtr &buffer) const {
     buffer->write(m_partition)
           ->write(m_message_set_size);
     //Message set does not have a header
+    uint32_t i = 1;
     for(std::vector<MessageRequest>::const_iterator msg_set = m_message_set.begin();
                     msg_set != m_message_set.end(); ++msg_set ) {
         buffer->write(*msg_set);
+        std::cout<<"Writing "<<i<<" OFF: "<<buffer->size()<<std::endl;
+        i++;
     }
 } 
 

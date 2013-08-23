@@ -89,7 +89,7 @@ ProduceCommand::get_request() {
     request.m_header.m_correlation_id = 55;
     request.m_required_acks = m_ack_type;
     request.m_timeout = -1; //CHECK
-    
+
     ProducerTopicMessagesRequest topicMessagesRequest;
     topicMessagesRequest.m_partition = m_partition;
     int32_t msg_set_size = 0;

@@ -88,8 +88,8 @@ CommandExecutor::start() {
             kafka_socket = m_connection_pool->leader(partiton);
             if( !kafka_socket ) {
                 //TODO::LOG ERROR
-                //std::cout<<"Socket not found: ("<<partiton->m_topic
-                            //<<","<<partiton->m_partiton<<")"<<std::endl;
+                std::cout<<"Socket not found: ("<<partiton->m_topic
+                            <<","<<partiton->m_partiton<<")"<<std::endl;
                 //TODO::SEND ERROR
                 continue;
             }

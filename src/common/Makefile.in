@@ -216,11 +216,11 @@ libcommon_la_SOURCES = \
             hostdetails.cpp
 
 noinst_HEADERS = \
-            buffer.h \
 			serializable.h \
 			deserializable.h
 
 include_HEADERS = \
+            buffer.h \
 			error.h \
             hostdetails.h
 
