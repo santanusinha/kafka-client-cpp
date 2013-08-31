@@ -59,7 +59,7 @@ ConnectionPool::setup_broker_connection(const HostList &brokers) throw(KafkaErro
             m_meta_channel = Socket( new boost::asio::ip::tcp::socket(m_io_service) );
             m_meta_channel->connect(end, error);
             if(!error) {
-                std::cout<<"BROKER CONNECTION INITIALIZED"<<std::endl;
+                //std::cout<<"BROKER CONNECTION INITIALIZED"<<std::endl;
                 break; //Connection established
             }
         }

@@ -128,7 +128,7 @@ ProducerTopicMessagesRequest::save(const BufferPtr &buffer) const {
     for(std::vector<MessageRequest>::const_iterator msg_set = m_message_set.begin();
                     msg_set != m_message_set.end(); ++msg_set ) {
         buffer->write(*msg_set);
-        std::cout<<"Writing "<<i<<" OFF: "<<buffer->size()<<std::endl;
+        //std::cout<<"Writing "<<i<<" OFF: "<<buffer->size()<<std::endl;
         i++;
     }
 } 
